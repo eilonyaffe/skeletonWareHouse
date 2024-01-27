@@ -41,6 +41,7 @@ class SoldierCustomer: public Customer {
         
 };
 
+
 class CivilianCustomer: public Customer {
     public:
         CivilianCustomer(int id, const string &name, int locationDistance, int maxOrders);
