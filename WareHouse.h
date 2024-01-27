@@ -27,15 +27,13 @@ class WareHouse {
         bool volunteerExists(int volunteerId); //new TODO keep?
         bool customerExists(int customerId); //new TODO keep?
         bool custCanMakeOrder(int customerId); //new
-        //TODO add volunteer can take order?
         Order &getOrder(int orderId) const;
         bool orderExists(int orderId); //new TODO keep?
-
         const vector<BaseAction*> &getActions() const;
         void close();
         void open();
-        vector<Volunteer*> parseVolunteers(const string &configFilePath);
-        vector<Customer*> parseCustomers(const string &configFilePath);
+        void parseVolunteers(const string &configFilePath);
+        void parseCustomers(const string &configFilePath);
 
     private:
         bool isOpen;
