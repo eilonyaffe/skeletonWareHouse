@@ -84,6 +84,14 @@ string CollectorVolunteer::toString() const{
     return info; //TODO check what should i return
 }
 
+string CollectorVolunteer::timeOrDistLeft() const{
+    return to_string(this->getTimeLeft());
+}
+
+string CollectorVolunteer::numOrdsLeft() const{
+    return "No Limit";
+}
+
 
 //LimitedCollectorVolunteer implementation
 LimitedCollectorVolunteer::LimitedCollectorVolunteer(int id, const string &name, int coolDown ,int maxOrders): CollectorVolunteer(id,name,coolDown), maxOrders(maxOrders), ordersLeft(maxOrders){}
@@ -117,6 +125,11 @@ string LimitedCollectorVolunteer::toString() const{
     string info = "id is: " + to_string(this->getId()) + " name is: " + this->getName() + " cooldown is: " + to_string(this->getCoolDown()) + " maxorders is: " + to_string(this->getMaxOrders()); 
     return info; //TODO check what should i return
 }
+
+string LimitedCollectorVolunteer::numOrdsLeft() const{
+    return to_string(this->getNumOrdersLeft());
+}
+
 
 //DriverVolunteer implementation
 DriverVolunteer::DriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep): Volunteer(id,name), maxDistance(maxDistance), distancePerStep(distancePerStep), distanceLeft(-1){}
@@ -168,6 +181,14 @@ string DriverVolunteer::toString() const{
     return info; //TODO check what should i return}
 }
 
+string DriverVolunteer::timeOrDistLeft() const{
+    return to_string(this->getDistanceLeft());
+}
+
+string DriverVolunteer::numOrdsLeft() const{
+    return "No Limit";
+}
+
 //LimitedDriverVolunteer implementation
 LimitedDriverVolunteer::LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep,int maxOrders): DriverVolunteer(id,name,maxDistance,distancePerStep), maxOrders(maxOrders), ordersLeft(maxOrders){}
 
@@ -201,36 +222,57 @@ string LimitedDriverVolunteer::toString() const{
     return info; //TODO check what should i return
 }
 
+string LimitedDriverVolunteer::numOrdsLeft() const{
+    return to_string(this->getNumOrdersLeft());
+}
+
+// int main(){ //TODO delete later, only testing
+//     Volunteer *drivVol = new LimitedDriverVolunteer(20917804, "Eilon", 15, 6,2);
+//     Volunteer *colVol = new CollectorVolunteer(20917804, "Eilon", 6);
+
+//     Order *longOrd = new Order(69,420,15);
+//     Order *shortOrd = new Order(14,58,13);
+//     drivVol->acceptOrder(*longOrd);
+//     colVol->acceptOrder(*shortOrd);
+
+//     cout << drivVol->timeOrDistLeft() << endl;
+//     cout << colVol->timeOrDistLeft() << endl;
+//     cout << drivVol->numOrdsLeft() << endl;
+//     cout << colVol->numOrdsLeft() << endl;
+
+//     return 0;
+// }
 
 // int main(){ //TODO delete later, only testing
 //     LimitedDriverVolunteer *drivVol = new LimitedDriverVolunteer(20917804, "Eilon", 15, 6,2);
 //     cout << drivVol->toString() << endl;
-    // LimitedDriverVolunteer *drivVolClone = drivVol->clone();
-    // Order *longOrd = new Order(69,420,16);
-    // Order *shortOrd = new Order(14,58,13);
+//     LimitedDriverVolunteer *drivVolClone = drivVol->clone();
+//     Order *longOrd = new Order(69,420,16);
+//     Order *shortOrd = new Order(14,58,13);
 
-    // cout << drivVol->getDistanceLeft() << endl;
-    // cout << drivVol->getMaxDistance() << endl;
-    // cout << drivVol->getDistancePerStep() << endl;
-    // cout << drivVol->hasOrdersLeft() << endl;
+//     cout << drivVol->getDistanceLeft() << endl;
+//     cout << drivVol->getMaxDistance() << endl;
+//     cout << drivVol->getDistancePerStep() << endl;
+//     cout << drivVol->hasOrdersLeft() << endl;
 
-    // cout << drivVol->canTakeOrder(*longOrd) << endl;
-    // cout << drivVol->canTakeOrder(*shortOrd) << endl;
+//     cout << drivVol->canTakeOrder(*longOrd) << endl;
+//     cout << drivVol->canTakeOrder(*shortOrd) << endl;
 
-    // drivVol->acceptOrder(*shortOrd);
-    // cout << "accepted order" << endl;
+//     drivVol->acceptOrder(*shortOrd);
+//     cout << "accepted order" << endl;
 
-    // while(drivVol->getDistanceLeft() > 0){
-    //     drivVol->step();
-    //     cout << "distance left: " << drivVol->getDistanceLeft() << endl;
-    // }
-    // cout << drivVol->getNumOrdersLeft() << endl;
-    // drivVol->acceptOrder(*shortOrd);
-    // cout << drivVol->getNumOrdersLeft() << endl;
-    // cout << drivVol->hasOrdersLeft() << endl;
+//     while(drivVol->getDistanceLeft() > 0){
+//         drivVol->step();
+//         cout << "distance left: " << drivVol->getDistanceLeft() << endl;
+//     }
+//     cout << drivVol->getNumOrdersLeft() << endl;
+//     drivVol->acceptOrder(*shortOrd);
+//     cout << drivVol->getNumOrdersLeft() << endl;
+//     cout << drivVol->hasOrdersLeft() << endl;
 
 
-    // return 0;
+//     return 0;
 // }
+
 
 
