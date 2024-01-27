@@ -21,6 +21,7 @@ class Order {
         int getId() const;
         int getCustomerId() const;
         void setStatus(OrderStatus status);
+        string getStatusAsString() const;
         void setCollectorId(int collectorId);
         void setDriverId(int driverId);
         int getCollectorId() const;
