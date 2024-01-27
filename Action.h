@@ -18,6 +18,7 @@ class BaseAction{
     public:
         BaseAction();
         ActionStatus getStatus() const;
+        string actionStatusAsString() const;
         virtual void act(WareHouse& wareHouse)=0;
         virtual string toString() const=0;
         virtual BaseAction* clone() const=0;
@@ -63,6 +64,7 @@ class AddCustomer : public BaseAction {
     private:
         const string customerName;
         const CustomerType customerType;
+        string customerTypeString;
         const int distance;
         const int maxOrders;
 };
