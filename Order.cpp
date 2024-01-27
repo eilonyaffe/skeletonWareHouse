@@ -42,16 +42,33 @@ OrderStatus Order::getStatus() const{
     return status;
 }
 
+string Order::getStatusAsString() const{
+    if(Order::status == OrderStatus::PENDING){
+        return "Pending";
+    }
+    else if(Order::status == OrderStatus::COLLECTING){
+        return "Collecting";
+    }
+    else if(Order::status == OrderStatus::DELIVERING){
+        return "Delivering";
+    }
+    else {
+        return "Completed";
+    }
+}
+
+
 const string Order::toString() const{
     string info = "id is: " + to_string(this->getId()) + " custID is: " + to_string(this->getCustomerId()) + " Distance is: " + to_string(this->getDistance()); 
     return info; //TODO check what should i return
 }
 
+
+
 // int main(){ //TODO delete later, just tests
 //     Order *o = new Order(69,420,18);
-//     string s = (*o).toString();
+//     string s = (*o).getStatusAsString();
 //     std::cout << s << std::endl;
-
 
 
 //     return 0;
