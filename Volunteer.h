@@ -14,6 +14,7 @@ class Volunteer {
         const string &getName() const;
         int getActiveOrderId() const;
         int getCompletedOrderId() const;
+        void resetCompletedOrderId(); //new
         bool isBusy() const; // Signal whether the volunteer is currently processing an order    
         virtual bool hasOrdersLeft() const = 0; // Signal whether the volunteer didn't reach orders limit,Always true for CollectorVolunteer and DriverVolunteer
         virtual bool canTakeOrder(const Order &order) const = 0; // Signal if the volunteer can take the order.      
@@ -26,6 +27,7 @@ class Volunteer {
 
         virtual string timeOrDistLeft() const = 0; //new function, for action PrintVolunteerStatus
         virtual string numOrdsLeft() const = 0; //new function, for action PrintVolunteerStatus
+        virtual string volunteerType() const = 0; //new function, for assigning volunteers to orders
 
 
     protected:
@@ -54,8 +56,8 @@ class CollectorVolunteer: public Volunteer {
         string toString() const override;
         string timeOrDistLeft() const override; //new function, for action PrintVolunteerStatus
         string numOrdsLeft() const override; //new function, for action PrintVolunteerStatus
+        string volunteerType() const override;
 
-    
     private:
         const int coolDown; // The time it takes the volunteer to process an order
         int timeLeft; // Time left until the volunteer finishes his current order
@@ -98,6 +100,7 @@ class DriverVolunteer: public Volunteer {
         string toString() const override;
         string timeOrDistLeft() const override; //new function, for action PrintVolunteerStatus
         string numOrdsLeft() const override; //new function, for action PrintVolunteerStatus
+        string volunteerType() const override;
 
 
 
