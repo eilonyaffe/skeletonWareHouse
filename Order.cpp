@@ -59,8 +59,8 @@ string Order::getStatusAsString() const{
 
 
 const string Order::toString() const{
-    string info = "id is: " + to_string(this->getId()) + " custID is: " + to_string(this->getCustomerId()) + " Distance is: " + to_string(this->getDistance()); 
-    return info; //TODO check what should i return
+    return "id is: " + to_string(this->getId()) + " custID is: " + to_string(this->getCustomerId()) + " Distance is: " + to_string(this->getDistance()) + "collectorId: " + to_string(collectorId) + " driverId: " + to_string(driverId) + " status: " + this->getStatusAsString(); 
+    //TODO check what i actually need to return
 }
 
 
