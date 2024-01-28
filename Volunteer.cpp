@@ -26,6 +26,10 @@ int Volunteer::getCompletedOrderId() const{
     return completedOrderId;
 }
 
+void Volunteer::resetCompletedOrderId(){
+    Volunteer::completedOrderId = -1;
+}
+
 bool Volunteer::isBusy() const{
     return (activeOrderId != -1);
 }
@@ -92,6 +96,10 @@ string CollectorVolunteer::numOrdsLeft() const{
     return "No Limit";
 }
 
+string CollectorVolunteer::volunteerType() const{
+    return "Collector";
+}
+
 
 //LimitedCollectorVolunteer implementation
 LimitedCollectorVolunteer::LimitedCollectorVolunteer(int id, const string &name, int coolDown ,int maxOrders): CollectorVolunteer(id,name,coolDown), maxOrders(maxOrders), ordersLeft(maxOrders){}
@@ -104,8 +112,8 @@ bool LimitedCollectorVolunteer::hasOrdersLeft() const{
     return (LimitedCollectorVolunteer::ordersLeft > 0); //has 1 or more
 }
 
-bool LimitedCollectorVolunteer::canTakeOrder(const Order &order) const{ //TODO wonder why has order object. should also use hasordersleft?
-    return CollectorVolunteer::canTakeOrder(order);
+bool LimitedCollectorVolunteer::canTakeOrder(const Order &order) const{ 
+    return (CollectorVolunteer::canTakeOrder(order) && this->hasOrdersLeft());
 }
 
 void LimitedCollectorVolunteer::acceptOrder(const Order &order){ //TODO should first check if can take order
@@ -163,7 +171,7 @@ bool DriverVolunteer::canTakeOrder(const Order &order) const{
     return (!(this->isBusy()) && order.getDistance()<=maxDistance);
 }
 
-void DriverVolunteer::acceptOrder(const Order &order){ //TODO maybe first check canTakeOrder?
+void DriverVolunteer::acceptOrder(const Order &order){ //TODO first check canTakeOrder
     DriverVolunteer::distanceLeft = order.getDistance();
     DriverVolunteer::activeOrderId = order.getId();
 }
@@ -189,6 +197,10 @@ string DriverVolunteer::numOrdsLeft() const{
     return "No Limit";
 }
 
+string DriverVolunteer::volunteerType() const{
+    return "Driver";
+}
+
 //LimitedDriverVolunteer implementation
 LimitedDriverVolunteer::LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep,int maxOrders): DriverVolunteer(id,name,maxDistance,distancePerStep), maxOrders(maxOrders), ordersLeft(maxOrders){}
 
@@ -208,11 +220,11 @@ bool LimitedDriverVolunteer::hasOrdersLeft() const{
     return (LimitedDriverVolunteer::ordersLeft > 0); 
 }
 
-bool LimitedDriverVolunteer::canTakeOrder(const Order &order) const{ //TODO should also check hasordersleft?
-    return DriverVolunteer::canTakeOrder(order);
+bool LimitedDriverVolunteer::canTakeOrder(const Order &order) const{
+    return (DriverVolunteer::canTakeOrder(order) && this->hasOrdersLeft());
 }
 
-void LimitedDriverVolunteer::acceptOrder(const Order &order){ //TODO should first check if can take order?
+void LimitedDriverVolunteer::acceptOrder(const Order &order){ //TODO should first check if can take order
     DriverVolunteer::acceptOrder(order);
     LimitedDriverVolunteer::ordersLeft--;
 }
@@ -227,18 +239,12 @@ string LimitedDriverVolunteer::numOrdsLeft() const{
 }
 
 // int main(){ //TODO delete later, only testing
-//     Volunteer *drivVol = new LimitedDriverVolunteer(20917804, "Eilon", 15, 6,2);
-//     Volunteer *colVol = new CollectorVolunteer(20917804, "Eilon", 6);
+//     Volunteer *drivVol = new LimitedDriverVolunteer(20917804, "Eilon", 15, 6,0);
+//     Volunteer *drivVol2 = drivVol->clone();
+//     drivVol2->setActiveID(34);
+//     cout << drivVol2->getActiveOrderId() << endl;
 
-//     Order *longOrd = new Order(69,420,15);
-//     Order *shortOrd = new Order(14,58,13);
-//     drivVol->acceptOrder(*longOrd);
-//     colVol->acceptOrder(*shortOrd);
-
-//     cout << drivVol->timeOrDistLeft() << endl;
-//     cout << colVol->timeOrDistLeft() << endl;
-//     cout << drivVol->numOrdsLeft() << endl;
-//     cout << colVol->numOrdsLeft() << endl;
+//     cout << drivVol->getActiveOrderId() << endl;
 
 //     return 0;
 // }
