@@ -6,6 +6,7 @@
 #include "Customer.h"
 #include "Volunteer.h"
 
+
 class BaseAction;
 class Volunteer;
 
@@ -17,10 +18,15 @@ class WareHouse {
     public:
         WareHouse(const string &configFilePath);
         void start();
+        void simulateStepOnce(); //new
+        void deleteOrderFromProccessed(int orderId); //new
+        void deleteOrderFromPending(int orderId); //new
+        void deleteVolunteerFromVector(int volID); //new
+        bool assignSuitedCollector(Order& newOrd); //new
+        bool assignSuitedDriver(Order& newOrd); //new
         void addOrder(Order* order);
         bool newOrderbyID(int customerId);//new. TODO: make const?
-        void AddCustomer(string customerName, string customerType, int distance, int maxOrders); //new. TODO: make const?
-
+        void AddCustomerToWareHouse(string customerName, string customerType, int distance, int maxOrders); //new. TODO: make const?
         void addAction(BaseAction* action);
         Customer &getCustomer(int customerId) const;
         Volunteer &getVolunteer(int volunteerId) const;
@@ -34,6 +40,8 @@ class WareHouse {
         void open();
         void parseVolunteers(const string &configFilePath);
         void parseCustomers(const string &configFilePath);
+        void printAllOrders(); //TODO delete later? used for debugging
+
 
     private:
         bool isOpen;
