@@ -41,7 +41,8 @@ const vector<int> &Customer::getOrdersIds() const{
 
 int Customer::addOrder(int orderId){
     if(this->canMakeOrder()){
-        ordersId.push_back(orderId); //TODO maybe check if i should check if the ID isnt already there, prevent dups
+        ordersId.push_back(orderId); //TODO maybe check if i should check if the ID isnt already there, prevent dups. remember now the last inserted order is cust' curr order
+        Customer::orderCount++;
         return orderId;
     }
     else{
