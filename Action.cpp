@@ -37,16 +37,30 @@ void BaseAction::error(string errorMsg){
     cout << "Error: " << errorMsg << endl;
 }
 
-string BaseAction::getErrorMsg() const{
+string BaseAction::getErrorMsg() const{ //TODO need to change it?
     return this->errorMsg;
 }
 
 
 
-//TODO implement SimulateStep
+//SimulateStep implementation
+SimulateStep::SimulateStep(int numOfSteps):numOfSteps(numOfSteps){}
 
-//
+void SimulateStep::act(WareHouse &wareHouse){
+    for(int i=0; i<SimulateStep::numOfSteps; i++){
+        wareHouse.simulateStepOnce();
+    }
+    this->complete();
+    wareHouse.addAction(this);
+}
 
+string SimulateStep::toString() const{
+    return "SimulateStep " + to_string(SimulateStep::numOfSteps) + " " + this->actionStatusAsString();
+}
+
+SimulateStep *SimulateStep::clone() const{
+    return new SimulateStep(*this);
+}
 
 //AddOrder implementation
 AddOrder::AddOrder(int id): BaseAction(), customerId(id){}
@@ -57,7 +71,7 @@ void AddOrder::act(WareHouse &wareHouse){
         this->complete();
     }
     else{
-        this->error("Cannot place this order”");
+        this->error("Cannot place this order");
     }
     wareHouse.addAction(this);
 }
@@ -72,10 +86,10 @@ AddOrder *AddOrder::clone() const{
 
 
 //AddCustomer implementation
-AddCustomer::AddCustomer(string customerName, string customerType, int distance, int maxOrders): BaseAction(), customerName(customerName), customerTypeString(customerType), customerType((customerType=="Soldier")?CustomerType::Soldier:CustomerType::Civilian),distance(distance), maxOrders(maxOrders){}
+AddCustomer::AddCustomer(const string &customerName, const string &customerType, int distance, int maxOrders): BaseAction(), customerName(customerName), customerTypeString(customerType), customerType((customerType=="Soldier")?CustomerType::Soldier:CustomerType::Civilian),distance(distance), maxOrders(maxOrders){}
 
 void AddCustomer::act(WareHouse &wareHouse){
-    wareHouse.AddCustomer(customerName,customerTypeString, distance, maxOrders);
+    wareHouse.AddCustomerToWareHouse(customerName,customerTypeString, distance, maxOrders);
     this->complete();
     wareHouse.addAction(this);
 }
@@ -143,9 +157,8 @@ void PrintCustomerStatus::act(WareHouse &wareHouse){
             Order ord = wareHouse.getOrder(currOrdNum);
             cout << "OrderID: " << currOrdNum << endl; 
             cout << "OrderStatus: " << ord.getStatusAsString() << endl; 
-            cout << "to string of that order: " << ord.toString() << endl; 
         }
-        cout << "numOrdersLeft: " << cust->getMaxOrders() << endl; 
+        cout << "numOrdersLeft: " << (cust->getMaxOrders()-cust->getNumOrders()) << endl; 
         this->complete();
     }
     else{
@@ -187,7 +200,7 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse){
         this->complete();
     }
     else{
-        this->error("“Volunteer doesn't exist");
+        this->error("Volunteer doesn't exist");
     }
     wareHouse.addAction(this);
 
@@ -222,25 +235,42 @@ string PrintActionsLog::toString() const{
 }
 
 //TODO close
-
+// should use action CLOSE in the warehouse.cpp
+// should use destructor of warehouse
 //
 
-//TODO backup
-
+//TODO backup warehouse
+//should use copy constuctor for warehouse
 //
 
-//TODO restore
-
+//TODO restore warehouse
+//should use copy assignment(?) for warehouse
 //
 
 
 // int main(){
 //     string fileLocation = "../bin/rest/configFileExample.txt";
 //     WareHouse wh(fileLocation);
-//     AddOrder *adder = new AddOrder(5);
-//     adder->act(wh);
-//     PrintVolunteerStatus *volstat = new PrintVolunteerStatus(4);
-//     volstat->act(wh);
+
+//     AddCustomer *addCust = new AddCustomer("Dov", "civilian", 7, 2);
+//     addCust->act(wh);
+
+//     AddOrder *adder11 = new AddOrder(1);
+//     AddOrder *adder12 = new AddOrder(1);
+//     AddOrder *adder21 = new AddOrder(2);
+//     AddOrder *adder31 = new AddOrder(3);
+
+
+//     adder11->act(wh);
+//     adder12->act(wh);
+//     adder21->act(wh);
+//     adder31->act(wh);
+
+//     SimulateStep *stepper = new SimulateStep(7);
+//     stepper->act(wh);
+
+//     wh.printAllOrders();
+
 //     PrintActionsLog *prAcLog = new PrintActionsLog();
 //     prAcLog->act(wh);
 //     return 0;
