@@ -20,6 +20,7 @@ class Customer {
 
         virtual Customer *clone() const = 0; // Return a copy of the customer
         virtual string toString() const = 0;
+        virtual ~Customer() = default; //virtual destructor
 
         
     private:

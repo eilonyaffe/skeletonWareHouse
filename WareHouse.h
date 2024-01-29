@@ -42,6 +42,16 @@ class WareHouse {
         void parseCustomers(const string &configFilePath);
         void printAllOrders(); //TODO delete later? used for debugging
 
+        //neya adds:
+        ~WareHouse(); //overrides the default one
+        WareHouse(const WareHouse& other); //overrides the default one
+        WareHouse& operator=(const WareHouse& other); //overrides the default one
+        //WareHouse(WareHouse&& other); //move constructor rule of 5
+        //needs to implement move assignment constructor
+        
+
+        vector<Customer*> getCustomers(); //TO DELETEE COMPLETELY
+        void deleteCustomer(); //TO DELETEE COMPLETELY
 
     private:
         bool isOpen;

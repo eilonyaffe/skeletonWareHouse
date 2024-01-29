@@ -29,6 +29,8 @@ class Volunteer {
         virtual string numOrdsLeft() const = 0; //new function, for action PrintVolunteerStatus
         virtual string volunteerType() const = 0; //new function, for assigning volunteers to orders
 
+        virtual ~Volunteer() = default; //virtual destructor
+
 
     protected:
         int completedOrderId; //Initialized to NO_ORDER if no order has been completed yet
