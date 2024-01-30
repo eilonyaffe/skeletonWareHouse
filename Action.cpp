@@ -281,9 +281,27 @@ string BackupWareHouse::toString() const{
 
 
 
-//TODO restore warehouse
-//should use copy assignment(?) for warehouse
-//
+//RestoreWareHouse implementation
+RestoreWareHouse::RestoreWareHouse(){}
+
+void RestoreWareHouse::act(WareHouse &wareHouse){
+    if (backup != nullptr){
+        wareHouse = *backup;
+        this->complete();
+    }
+    else {
+        this->error("No backup available");
+    }
+    wareHouse.addAction(this);
+}
+
+RestoreWareHouse *RestoreWareHouse::clone() const{
+    return new RestoreWareHouse(*this);
+}
+
+string RestoreWareHouse::toString() const{
+    return "restore " + this->actionStatusAsString();
+}
 
 
 // int main(){

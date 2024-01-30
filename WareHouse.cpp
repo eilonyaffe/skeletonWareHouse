@@ -91,10 +91,10 @@ void WareHouse::start(){
                 BackupWareHouse *actor = new BackupWareHouse();
                 actor->act(*this);
             }
-            // else if(splittedWords.at(0) == "restore"){
-            //     RestoreWareHouse *actor = new RestoreWareHouse(stoi(splittedWords.at(1)));
-            //     actor->act(*this);
-            // }
+            else if(splittedWords.at(0) == "restore"){
+                RestoreWareHouse *actor = new RestoreWareHouse();
+                actor->act(*this);
+            }
 
         }
 
@@ -554,7 +554,7 @@ void WareHouse::deleteCustomer(){
 
 
 
-WareHouse& WareHouse::operator=(const WareHouse& other){
+WareHouse& WareHouse::operator=(const WareHouse& other){ //copy assignment operator
     if (this != &other){ //avoid invalid self assignment
         
         //STEP 1: deallocating old memory
