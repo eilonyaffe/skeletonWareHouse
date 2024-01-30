@@ -87,10 +87,10 @@ void WareHouse::start(){
                 flag = false;
                 break;
             }
-            // else if(splittedWords.at(0) == "backup"){
-            //     BackupWareHouse *actor = new BackupWareHouse(stoi(splittedWords.at(1)));
-            //     actor->act(*this);
-            // }
+            else if(splittedWords.at(0) == "backup"){
+                BackupWareHouse *actor = new BackupWareHouse();
+                actor->act(*this);
+            }
             // else if(splittedWords.at(0) == "restore"){
             //     RestoreWareHouse *actor = new RestoreWareHouse(stoi(splittedWords.at(1)));
             //     actor->act(*this);

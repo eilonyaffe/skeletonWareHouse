@@ -12,6 +12,8 @@ using std::vector;
 #include <iostream>
 using namespace std; //TODO delete later?
 
+
+
 //BaseAction implementation
 BaseAction::BaseAction():errorMsg("ERROR_Message_for_the_meantime"), status(ActionStatus::ERROR){} //maybe change the errorMsg? maybe don't start with Error status?
 
@@ -256,9 +258,28 @@ string Close::toString() const{
     return "close " + this->actionStatusAsString();
 }
 
-//TODO backup warehouse
-//should use copy constuctor for warehouse
-//
+//BackupWareHouse implementation
+BackupWareHouse::BackupWareHouse(){}
+
+void BackupWareHouse::act(WareHouse &wareHouse){
+    if (backup != nullptr){ //means there is already some version of old backup
+        delete backup;
+    }
+    backup = new WareHouse(wareHouse);
+
+    this->complete();
+    wareHouse.addAction(this);
+}
+
+BackupWareHouse *BackupWareHouse::clone() const{
+    return new BackupWareHouse(*this);
+}
+
+string BackupWareHouse::toString() const{
+    return "backup " + this->actionStatusAsString();
+}
+
+
 
 //TODO restore warehouse
 //should use copy assignment(?) for warehouse
