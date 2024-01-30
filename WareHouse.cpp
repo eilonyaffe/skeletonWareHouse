@@ -43,7 +43,7 @@ void WareHouse::start(){
         
         for(int i=0; i<splittedWords.size(); i++){ //TODO maybe there's a more elegant way to do this part
             if(splittedWords.at(0) == "step"){
-                BaseAction *actor = new SimulateStep(stoi(splittedWords.at(1)));
+                SimulateStep *actor = new SimulateStep(stoi(splittedWords.at(1)));
                 actor->act(*this);
                 break;
             }
@@ -81,10 +81,12 @@ void WareHouse::start(){
 
             //TODO uncomment these once these actions are implemented
             
-            // else if(splittedWords.at(0) == "close"){
-            //     Close *actor = new Close(stoi(splittedWords.at(1)));
-            //     actor->act(*this);
-            // }
+            else if(splittedWords.at(0) == "close"){
+                Close *actor = new Close();
+                actor->act(*this);
+                flag = false;
+                break;
+            }
             // else if(splittedWords.at(0) == "backup"){
             //     BackupWareHouse *actor = new BackupWareHouse(stoi(splittedWords.at(1)));
             //     actor->act(*this);
@@ -324,10 +326,21 @@ const vector<BaseAction*> &WareHouse::getActions() const{
     return WareHouse::actionsLog;
 }
 
+void WareHouse::close(){
 
-//TODO close
-// destructor
-//
+    //prints all orders
+    for (const auto& pendingOrder : pendingOrders) {
+        std::cout << pendingOrder->toString() << std::endl; 
+    }
+    for (const auto& inProcessOrder : inProcessOrders) {
+        std::cout << inProcessOrder->toString() << std::endl; 
+    }
+    for (const auto& completedOrder : completedOrders) {
+        std::cout << completedOrder->toString() << std::endl;
+    }
+    this->isOpen = false;
+}
+
 
 
 void WareHouse::open(){

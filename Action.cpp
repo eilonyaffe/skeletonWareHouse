@@ -239,6 +239,23 @@ string PrintActionsLog::toString() const{
 // should use destructor of warehouse
 //
 
+//Close implementation
+Close::Close(){}
+
+void Close::act(WareHouse &wareHouse){
+    wareHouse.close();
+    this->complete();
+    wareHouse.addAction(this);
+}
+
+Close *Close::clone() const{
+    return new Close(*this);
+}
+
+string Close::toString() const{
+    return "close " + this->actionStatusAsString();
+}
+
 //TODO backup warehouse
 //should use copy constuctor for warehouse
 //
