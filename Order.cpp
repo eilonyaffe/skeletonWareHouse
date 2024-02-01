@@ -4,7 +4,7 @@
 using namespace std; //TODO delete later?
 
 
-Order::Order(int id, int customerId, int distance): id(id), customerId(customerId), distance(distance), collectorId(-1), driverId(-1), status(OrderStatus::PENDING){}
+Order::Order(int id, int customerId, int distance): id(id), customerId(customerId), distance(distance), status(OrderStatus::PENDING), collectorId(-1), driverId(-1){}
 
 int Order::getId() const{
     return id;

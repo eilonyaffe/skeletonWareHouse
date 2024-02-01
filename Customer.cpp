@@ -5,11 +5,11 @@
 using namespace std; //TODO delete later?
 
 
-Customer::Customer(int id, const string &name, int locationDistance, int maxOrders):id(id),name(name),locationDistance(locationDistance), maxOrders(maxOrders){
-    vector<int> ordersID;
-    Customer::ordersId = ordersID; //keep? maybe autocreates when doing first push
-    Customer::orderCount = 0;
-}
+Customer::Customer(int id, const string &name, int locationDistance, int maxOrders):id(id),name(name),locationDistance(locationDistance), maxOrders(maxOrders), ordersId(), orderCount(0){}
+
+    //vector<int> ordersID;
+    //Customer::ordersId = ordersID; //keep? maybe autocreates when doing first push
+
 
 const string &Customer::getName() const{
     return name;

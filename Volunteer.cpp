@@ -8,7 +8,7 @@
 using namespace std; //TODO delete later?
 
 //volunteer implementation
-Volunteer::Volunteer(int id, const string &name):id(id), name(name),completedOrderId(-1), activeOrderId(-1){}
+Volunteer::Volunteer(int id, const string &name): completedOrderId(-1), activeOrderId(-1), id(id), name(name){}
 
 int Volunteer::getId() const{
     return id;

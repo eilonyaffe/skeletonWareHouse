@@ -46,10 +46,9 @@ class WareHouse {
         ~WareHouse(); //overrides the default one
         WareHouse(const WareHouse& other); //overrides the default one
         WareHouse& operator=(const WareHouse& other); //overrides the default one
-        //WareHouse(WareHouse&& other); //move constructor rule of 5
-        //needs to implement move assignment constructor
+        WareHouse(WareHouse&& other) noexcept; //move constructor rule of 5
+        WareHouse& operator=(WareHouse&& other) noexcept;//move assignment constructor
         
-
         vector<Customer*> getCustomers(); //TO DELETEE COMPLETELY
         void deleteCustomer(); //TO DELETEE COMPLETELY
 

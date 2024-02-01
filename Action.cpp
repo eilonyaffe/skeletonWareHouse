@@ -36,7 +36,7 @@ void BaseAction::complete(){
 
 void BaseAction::error(string errorMsg){
     this->status = ActionStatus::ERROR; //TODO also says in the guide to update the errorMSG, to what?
-    cout << "Error: " << errorMsg << endl;
+    cout << "\nError: " << errorMsg << endl;
 }
 
 string BaseAction::getErrorMsg() const{ //TODO need to change it?
@@ -73,7 +73,7 @@ void AddOrder::act(WareHouse &wareHouse){
         this->complete();
     }
     else{
-        this->error("Cannot place this order");
+        this->error("Cannot place this order\n");
     }
     wareHouse.addAction(this);
 }
@@ -88,7 +88,7 @@ AddOrder *AddOrder::clone() const{
 
 
 //AddCustomer implementation
-AddCustomer::AddCustomer(const string &customerName, const string &customerType, int distance, int maxOrders): BaseAction(), customerName(customerName), customerTypeString(customerType), customerType((customerType=="Soldier")?CustomerType::Soldier:CustomerType::Civilian),distance(distance), maxOrders(maxOrders){}
+AddCustomer::AddCustomer(const string &customerName, const string &customerType, int distance, int maxOrders): BaseAction(), customerName(customerName), customerType((customerType=="Soldier")?CustomerType::Soldier:CustomerType::Civilian), customerTypeString(customerType), distance(distance), maxOrders(maxOrders){}
 
 void AddCustomer::act(WareHouse &wareHouse){
     wareHouse.AddCustomerToWareHouse(customerName,customerTypeString, distance, maxOrders);
@@ -112,7 +112,7 @@ void PrintOrderStatus::act(WareHouse &wareHouse){
 
     if(orderExists){
         Order ord = wareHouse.getOrder(PrintOrderStatus::orderId);
-        cout << "OrderId: " << PrintOrderStatus::orderId << endl;
+        cout << "\nOrderId: " << PrintOrderStatus::orderId << endl;
         cout << "OrderStatus: " << ord.getStatusAsString() << endl;
         cout << "CustomerID: " << ord.getCustomerId() << endl;
         int collectorId = ord.getCollectorId();
@@ -124,16 +124,16 @@ void PrintOrderStatus::act(WareHouse &wareHouse){
         }
         int driverId = ord.getDriverId();
         if(driverId != -1){
-            cout << "Driver: " << driverId << endl;
+            cout << "Driver: " << driverId << "\n" << endl;
         }
         else{
-            cout << "Driver: None" << endl;
+            cout << "Driver: None\n" << endl;
         }
         this->complete();
     }
 
     else{
-        this->error("Order doesn't exist");
+        this->error("Order doesn't exist\n");
     }
     wareHouse.addAction(this);
 }
@@ -153,18 +153,18 @@ void PrintCustomerStatus::act(WareHouse &wareHouse){
     bool customerExists = wareHouse.customerExists(PrintCustomerStatus::customerId);
     if(customerExists){
         Customer *cust = &wareHouse.getCustomer(PrintCustomerStatus::customerId); //TODO remember to delete
-        cout << "CustomerID: " << PrintCustomerStatus::customerId << endl;
+        cout << "\nCustomerID: " << PrintCustomerStatus::customerId << endl;
         vector<int> custOrders = cust->getOrdersIds();
         for (const auto& currOrdNum : custOrders) {
             Order ord = wareHouse.getOrder(currOrdNum);
-            cout << "OrderID: " << currOrdNum << endl; 
+            cout << "OrderId: " << currOrdNum << endl; 
             cout << "OrderStatus: " << ord.getStatusAsString() << endl; 
         }
-        cout << "numOrdersLeft: " << (cust->getMaxOrders()-cust->getNumOrders()) << endl; 
+        cout << "numOrdersLeft: " << (cust->getMaxOrders()-cust->getNumOrders()) << "\n" << endl; 
         this->complete();
     }
     else{
-        this->error("Customer doesn't exist");
+        this->error("Customer doesn't exist\n");
     }
     wareHouse.addAction(this);
 
@@ -185,24 +185,24 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse){
     bool volunteerExists = wareHouse.volunteerExists(PrintVolunteerStatus::volunteerId);
     if(volunteerExists){
         Volunteer *vol = &wareHouse.getVolunteer(PrintVolunteerStatus::volunteerId); //TODO remember to delete
-        cout << "VolunteerID: " << PrintVolunteerStatus::volunteerId << endl;
+        cout << "\nVolunteerID: " << PrintVolunteerStatus::volunteerId << endl;
         bool busy = vol->isBusy();
         if(busy){
             cout << "isBusy: True" << endl;
             cout << "OrderID: " << vol->getActiveOrderId() << endl;
             cout << "OrdersLeft: " << vol->timeOrDistLeft() << endl;
-            cout << "OrdersLeft: " << vol->numOrdsLeft() << endl;
+            cout << "OrdersLeft: " << vol->numOrdsLeft() << "\n" << endl;
         }
         else{
             cout << "isBusy: False" << endl;
             cout << "OrderID: None" << endl;
             cout << "TimeLeft: None" << endl;
-            cout << "OrdersLeft: " << vol->numOrdsLeft() << endl;
+            cout << "OrdersLeft: " << vol->numOrdsLeft() << "\n" << endl;
         }
         this->complete();
     }
     else{
-        this->error("Volunteer doesn't exist");
+        this->error("Volunteer doesn't exist\n");
     }
     wareHouse.addAction(this);
 
@@ -221,9 +221,11 @@ PrintActionsLog::PrintActionsLog(){}
 
 void PrintActionsLog::act(WareHouse &wareHouse){
     vector<BaseAction*> whActions = wareHouse.getActions();
+    putchar('\n');
     for (const auto& action : whActions) {
         cout << action->toString() << endl; 
     }
+    putchar('\n');
     this->complete();
     wareHouse.addAction(this);
 }
@@ -290,7 +292,7 @@ void RestoreWareHouse::act(WareHouse &wareHouse){
         this->complete();
     }
     else {
-        this->error("No backup available");
+        this->error("No backup available\n");
     }
     wareHouse.addAction(this);
 }

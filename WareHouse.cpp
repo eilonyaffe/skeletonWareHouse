@@ -15,17 +15,20 @@
 using namespace std;
 
 
-WareHouse::WareHouse(const string &configFilePath){ //TODO intialize the rest of the vectors and fields if needed here
-    WareHouse::isOpen = false; //TODO should construct with true?
-    WareHouse::customerCounter = 0; 
-    WareHouse::volunteerCounter = 0;
-    WareHouse::orderCounter = 0;
+WareHouse::WareHouse(const string &configFilePath): isOpen(false), actionsLog(), volunteers(),pendingOrders(), inProcessOrders(), completedOrders(), customers(), customerCounter(0), volunteerCounter(0), orderCounter(0), flagCustomer(new SoldierCustomer(-1,"def",-1,-1)), flagVolunteer(new DriverVolunteer(-1,"def",-1,-1)), flagOrder(new Order(-1,-1,-1)){
     this->parseVolunteers(configFilePath);
     this->parseCustomers(configFilePath);
-    WareHouse::flagCustomer = new SoldierCustomer(-1,"def",-1,-1);
-    WareHouse::flagVolunteer = new DriverVolunteer(-1,"def",-1,-1);
-    WareHouse::flagOrder = new Order(-1,-1,-1);
 }
+    // WareHouse::isOpen = false; 
+    // WareHouse::customerCounter = 0; 
+    // WareHouse::volunteerCounter = 0;
+    // WareHouse::orderCounter = 0;
+    // this->parseVolunteers(configFilePath);
+    // this->parseCustomers(configFilePath);
+    // WareHouse::flagCustomer = new SoldierCustomer(-1,"def",-1,-1);
+    // WareHouse::flagVolunteer = new DriverVolunteer(-1,"def",-1,-1);
+    // WareHouse::flagOrder = new Order(-1,-1,-1);
+
 
 void WareHouse::start(){
     cout << "Warehouse is open!" << endl;
@@ -33,6 +36,7 @@ void WareHouse::start(){
     bool flag = true; //still gets input from user
     while(flag){
         string sentence;
+        //cout << sentence << endl;
         vector<string> splittedWords;
         getline(std::cin, sentence);
         istringstream iss(sentence);
@@ -40,8 +44,8 @@ void WareHouse::start(){
         while(iss>>word){
             splittedWords.push_back(word);
         }
-        
-        for(int i=0; i<splittedWords.size(); i++){ //TODO maybe there's a more elegant way to do this part
+        int sentenceSize = splittedWords.size();
+        for(int i=0; i<sentenceSize; i++){ //TODO maybe there's a more elegant way to do this part
             if(splittedWords.at(0) == "step"){
                 SimulateStep *actor = new SimulateStep(stoi(splittedWords.at(1)));
                 actor->act(*this);
@@ -327,7 +331,7 @@ const vector<BaseAction*> &WareHouse::getActions() const{
 }
 
 void WareHouse::close(){
-
+    putchar('\n');
     //prints all orders
     for (const auto& pendingOrder : pendingOrders) {
         std::cout << pendingOrder->toString() << std::endl; 
@@ -400,7 +404,7 @@ void WareHouse::parseVolunteers(const string &configFilePath){
                 int maxDistance = stoi(volunteersTemp[i+2]);
                 int distancePerStep = stoi(volunteersTemp[i+3]);
                 int maxOrders = stoi(volunteersTemp[i+4]);
-                DriverVolunteer *tempVol = new DriverVolunteer(this->volunteerCounter, name, maxDistance, distancePerStep);
+                LimitedDriverVolunteer *tempVol = new LimitedDriverVolunteer(this->volunteerCounter, name, maxDistance, distancePerStep, maxOrders);
                 volunteers.push_back(tempVol);
                 this->volunteerCounter++;
                 i += 4;
@@ -499,15 +503,8 @@ WareHouse::~WareHouse(){ //destructor
     cout << "deleted" << endl; //to delete COMPLETELY
 }
 
-WareHouse::WareHouse(const WareHouse& other){ //copy constructor
-
+WareHouse::WareHouse(const WareHouse& other): isOpen(other.isOpen), actionsLog(),volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter), flagCustomer(other.flagCustomer->clone()), flagVolunteer(other.flagVolunteer->clone()), flagOrder(new Order(*other.flagOrder)){ //copy constructor
     cout << "copy constructor" << endl; //to delete COMPLETELY
-
-    this->isOpen = other.isOpen;
-    this->customerCounter = other.customerCounter;
-    this->volunteerCounter = other.volunteerCounter;
-    this->orderCounter = other.orderCounter;
-
     for (const auto& act: other.actionsLog){
         this->actionsLog.push_back(act->clone());
     }
@@ -534,12 +531,47 @@ WareHouse::WareHouse(const WareHouse& other){ //copy constructor
         Order* newOrd = new Order(*ord);
         this->completedOrders.push_back(newOrd);
     }
-
-    this->flagCustomer = other.flagCustomer->clone(); 
-    this->flagVolunteer = other.flagVolunteer->clone(); 
-    this->flagOrder = new Order(*other.flagOrder);
-
 }
+
+//     cout << "copy constructor" << endl; //to delete COMPLETELY
+
+//     this->isOpen = other.isOpen;
+//     this->customerCounter = other.customerCounter;
+//     this->volunteerCounter = other.volunteerCounter;
+//     this->orderCounter = other.orderCounter;
+
+//     for (const auto& act: other.actionsLog){
+//         this->actionsLog.push_back(act->clone());
+//     }
+
+//     for (const auto& vol: other.volunteers){
+//         this->volunteers.push_back(vol->clone());
+//     }
+
+//     for (const auto& cust: other.customers){
+//         this->customers.push_back(cust->clone());
+//     }
+
+//     for (const auto& ord: other.pendingOrders){
+//         Order* newOrd = new Order(*ord);
+//         this->pendingOrders.push_back(newOrd);
+//     }
+    
+//     for (const auto& ord: other.inProcessOrders){
+//         Order* newOrd = new Order(*ord);
+//         this->inProcessOrders.push_back(newOrd);
+//     }
+
+//     for (const auto& ord: other.completedOrders){
+//         Order* newOrd = new Order(*ord);
+//         this->completedOrders.push_back(newOrd);
+//     }
+
+//     this->flagCustomer = other.flagCustomer->clone(); 
+//     this->flagVolunteer = other.flagVolunteer->clone(); 
+//     this->flagOrder = new Order(*other.flagOrder);
+
+// }
 
 //TO DELETEEE COMPLETELY
 vector<Customer*> WareHouse::getCustomers(){
@@ -555,6 +587,7 @@ void WareHouse::deleteCustomer(){
 
 
 WareHouse& WareHouse::operator=(const WareHouse& other){ //copy assignment operator
+    cout << "acopyAssignment" << endl;
     if (this != &other){ //avoid invalid self assignment
         
         //STEP 1: deallocating old memory
@@ -634,9 +667,69 @@ WareHouse& WareHouse::operator=(const WareHouse& other){ //copy assignment opera
     return *this;
 }
 
+//move constructor
+WareHouse::WareHouse(WareHouse&& other) noexcept: isOpen(std::move(other.isOpen)), actionsLog(std::move(other.actionsLog)), volunteers(std::move(other.volunteers)), pendingOrders(std::move(other.pendingOrders)), inProcessOrders(std::move(other.inProcessOrders)), completedOrders(std::move(other.completedOrders)), customers(std::move(customers)), customerCounter(std::move(other.customerCounter)), volunteerCounter(std::move(other.volunteerCounter)), orderCounter(std::move(other.orderCounter)), flagCustomer(other.flagCustomer), flagVolunteer(other.flagVolunteer), flagOrder(other.flagOrder){   
+    cout << "move constructor" << endl;
+    other.actionsLog.clear();
+    other.volunteers.clear();
+    other.pendingOrders.clear();
+    other.inProcessOrders.clear();
+    other.completedOrders.clear();
+    other.customers.clear();
+    other.flagCustomer = nullptr;
+    other.flagVolunteer = nullptr;
+    other.flagOrder = nullptr;
+}
 
-// WareHouse::WareHouse(WareHouse&& other) //move constructor
-//     :     {
+//move assignment operator
+WareHouse& WareHouse::operator=(WareHouse&& other) noexcept {
+    if (this != &other){ //avoid self assignment
+        this->isOpen = std::move(other.isOpen);
+
+        this->actionsLog = std::move(other.actionsLog);
+        other.actionsLog.clear();
+        this->volunteers = std::move(other.volunteers);
+        other.volunteers.clear();
+        this->pendingOrders = std::move(other.pendingOrders);
+        other.pendingOrders.clear();
+        this->inProcessOrders = std::move(other.inProcessOrders);
+        other.inProcessOrders.clear();
+        this->completedOrders = std::move(other.completedOrders);
+        other.completedOrders.clear();
+        this->customers = std::move(customers);
+        other.customers.clear();
+
+        this->customerCounter = std::move(other.customerCounter);
+        this->volunteerCounter = std::move(other.volunteerCounter);
+        this->orderCounter = std::move(other.orderCounter);
+
+        this->flagCustomer = other.flagCustomer;
+        other.flagCustomer = nullptr;
+        this->flagVolunteer = other.flagVolunteer;
+        other.flagVolunteer = nullptr;
+        this->flagOrder = other.flagOrder;
+        other.flagOrder = nullptr;
+    }
+    return *this;
+}
+
+// int main(){
+//     string fileLocation = "../bin/rest/configFileExample.txt";
+//     WareHouse wh(fileLocation); //what's inside are only what were in the file
+//     cout << "original customers:" << endl;
+//     vector<Customer*> f = wh.getCustomers();
+//     for (Customer* elem: f){
+//         string s = elem->toString();
+//         cout << s << endl;
+//     }
+
+//     WareHouse h = wh.createObject(fileLocation);
+//     cout << "updated customers:" << endl;
+//     vector<Customer*> f2 = h.getCustomers();
+//     for (Customer* elem: f2){
+//         string s = elem->toString();
+//         cout << s << endl;
+//     }
 
 // }
 
