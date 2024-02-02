@@ -18,40 +18,36 @@ class WareHouse {
     public:
         WareHouse(const string &configFilePath);
         void start();
-        void simulateStepOnce(); //new
-        void deleteOrderFromProccessed(int orderId); //new
-        void deleteOrderFromPending(int orderId); //new
-        void deleteVolunteerFromVector(int volID); //new
-        bool assignSuitedCollector(Order& newOrd); //new
-        bool assignSuitedDriver(Order& newOrd); //new
+        void simulateStepOnce(); 
+        void deleteOrderFromProccessed(int orderId); 
+        void deleteOrderFromPending(int orderId); 
+        void deleteVolunteerFromVector(int volID); 
+        bool assignSuitedCollector(Order& newOrd); 
+        bool assignSuitedDriver(Order& newOrd); 
         void addOrder(Order* order);
-        bool newOrderbyID(int customerId);//new. TODO: make const?
-        void AddCustomerToWareHouse(string customerName, string customerType, int distance, int maxOrders); //new. TODO: make const?
+        bool newOrderbyID(int customerId);
+        void AddCustomerToWareHouse(string customerName, string customerType, int distance, int maxOrders);
         void addAction(BaseAction* action);
         Customer &getCustomer(int customerId) const;
         Volunteer &getVolunteer(int volunteerId) const;
-        bool volunteerExists(int volunteerId); //new TODO keep?
-        bool customerExists(int customerId); //new TODO keep?
-        bool custCanMakeOrder(int customerId); //new
+        bool volunteerExists(int volunteerId);
+        bool customerExists(int customerId);
+        bool custCanMakeOrder(int customerId);
         Order &getOrder(int orderId) const;
-        bool orderExists(int orderId); //new TODO keep?
+        bool orderExists(int orderId);
         const vector<BaseAction*> &getActions() const;
         void close();
         void open();
         void parseVolunteers(const string &configFilePath);
         void parseCustomers(const string &configFilePath);
-        void printAllOrders(); //TODO delete later? used for debugging
-
-        //neya adds:
-        ~WareHouse(); //overrides the default one
-        WareHouse(const WareHouse& other); //overrides the default one
-        WareHouse& operator=(const WareHouse& other); //overrides the default one
-        WareHouse(WareHouse&& other) noexcept; //move constructor rule of 5
-        WareHouse& operator=(WareHouse&& other) noexcept;//move assignment constructor
         
-        vector<Customer*> getCustomers(); //TO DELETEE COMPLETELY
-        void deleteCustomer(); //TO DELETEE COMPLETELY
-
+        //Rule Of 5
+        ~WareHouse(); 
+        WareHouse(const WareHouse& other); 
+        WareHouse& operator=(const WareHouse& other); 
+        WareHouse(WareHouse&& other) noexcept; 
+        WareHouse& operator=(WareHouse&& other) noexcept;
+        
     private:
         bool isOpen;
         vector<BaseAction*> actionsLog;

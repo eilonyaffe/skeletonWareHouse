@@ -1,7 +1,6 @@
 #include "../include/Order.h"
-#include <iostream> //TODO delete later
 #include <string>
-using namespace std; //TODO delete later?
+using namespace std; 
 
 
 Order::Order(int id, int customerId, int distance): id(id), customerId(customerId), distance(distance), status(OrderStatus::PENDING), collectorId(-1), driverId(-1){}
@@ -57,22 +56,11 @@ string Order::getStatusAsString() const{
     }
 }
 
-
 const string Order::toString() const{
     return "OrderID: " + to_string(this->getId()) + ", CustomerID: " + to_string(this->getCustomerId()) + ", Status: " + this->getStatusAsString(); 
-    //TODO check what i actually need to return -> neya checked and changed:)
 }
 
 
-
-// int main(){ //TODO delete later, just tests
-//     Order *o = new Order(69,420,18);
-//     string s = (*o).getStatusAsString();
-//     std::cout << s << std::endl;
-
-
-//     return 0;
-// }
 
 
 

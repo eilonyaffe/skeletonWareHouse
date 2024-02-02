@@ -29,7 +29,7 @@ class Customer {
         const int locationDistance;
         const int maxOrders;
         vector<int> ordersId;
-        int orderCount; //added new field
+        int orderCount;
 };
 
 

@@ -10,12 +10,12 @@ using std::string;
 using std::vector;
 
 #include <iostream>
-using namespace std; //TODO delete later?
+using namespace std; 
 
 
 
 //BaseAction implementation
-BaseAction::BaseAction():errorMsg("ERROR_Message_for_the_meantime"), status(ActionStatus::ERROR){} //maybe change the errorMsg? maybe don't start with Error status?
+BaseAction::BaseAction():errorMsg("ERROR_Message_for_the_meantime"), status(ActionStatus::ERROR){}
 
 ActionStatus BaseAction::getStatus() const{
     return this->status;
@@ -35,11 +35,11 @@ void BaseAction::complete(){
 }
 
 void BaseAction::error(string errorMsg){
-    this->status = ActionStatus::ERROR; //TODO also says in the guide to update the errorMSG, to what?
+    this->status = ActionStatus::ERROR; 
     cout << "\nError: " << errorMsg << endl;
 }
 
-string BaseAction::getErrorMsg() const{ //TODO need to change it?
+string BaseAction::getErrorMsg() const{ 
     return this->errorMsg;
 }
 
@@ -152,7 +152,7 @@ PrintCustomerStatus::PrintCustomerStatus(int customerId): BaseAction(), customer
 void PrintCustomerStatus::act(WareHouse &wareHouse){
     bool customerExists = wareHouse.customerExists(PrintCustomerStatus::customerId);
     if(customerExists){
-        Customer *cust = &wareHouse.getCustomer(PrintCustomerStatus::customerId); //TODO remember to delete
+        Customer *cust = &wareHouse.getCustomer(PrintCustomerStatus::customerId); 
         cout << "\nCustomerID: " << PrintCustomerStatus::customerId << endl;
         vector<int> custOrders = cust->getOrdersIds();
         for (const auto& currOrdNum : custOrders) {
@@ -184,7 +184,7 @@ PrintVolunteerStatus::PrintVolunteerStatus(int volunteerId): BaseAction(), volun
 void PrintVolunteerStatus::act(WareHouse &wareHouse){
     bool volunteerExists = wareHouse.volunteerExists(PrintVolunteerStatus::volunteerId);
     if(volunteerExists){
-        Volunteer *vol = &wareHouse.getVolunteer(PrintVolunteerStatus::volunteerId); //TODO remember to delete
+        Volunteer *vol = &wareHouse.getVolunteer(PrintVolunteerStatus::volunteerId);
         cout << "\nVolunteerID: " << PrintVolunteerStatus::volunteerId << endl;
         bool busy = vol->isBusy();
         if(busy){
@@ -238,10 +238,6 @@ string PrintActionsLog::toString() const{
     return "log " + this->actionStatusAsString();
 }
 
-//TODO close
-// should use action CLOSE in the warehouse.cpp
-// should use destructor of warehouse
-//
 
 //Close implementation
 Close::Close(){}
@@ -264,7 +260,7 @@ string Close::toString() const{
 BackupWareHouse::BackupWareHouse(){}
 
 void BackupWareHouse::act(WareHouse &wareHouse){
-    if (backup != nullptr){ //means there is already some version of old backup
+    if (backup != nullptr){ //if there's an old backup
         delete backup;
     }
     backup = new WareHouse(wareHouse);
@@ -306,30 +302,3 @@ string RestoreWareHouse::toString() const{
 }
 
 
-// int main(){
-//     string fileLocation = "../bin/rest/configFileExample.txt";
-//     WareHouse wh(fileLocation);
-
-//     AddCustomer *addCust = new AddCustomer("Dov", "civilian", 7, 2);
-//     addCust->act(wh);
-
-//     AddOrder *adder11 = new AddOrder(1);
-//     AddOrder *adder12 = new AddOrder(1);
-//     AddOrder *adder21 = new AddOrder(2);
-//     AddOrder *adder31 = new AddOrder(3);
-
-
-//     adder11->act(wh);
-//     adder12->act(wh);
-//     adder21->act(wh);
-//     adder31->act(wh);
-
-//     SimulateStep *stepper = new SimulateStep(7);
-//     stepper->act(wh);
-
-//     wh.printAllOrders();
-
-//     PrintActionsLog *prAcLog = new PrintActionsLog();
-//     prAcLog->act(wh);
-//     return 0;
-// }

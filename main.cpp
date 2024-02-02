@@ -1,4 +1,4 @@
-#include "../include/WareHouse.h"
+#include "WareHouse.h"
 #include <iostream>
 
 using namespace std;
@@ -6,7 +6,6 @@ using namespace std;
 WareHouse* backup = nullptr;
 
 int main(int argc, char** argv){
-    string fileLocation = "../bin/configFileExample.txt";
     if(argc!=2){
         std::cout << "usage: warehouse <config_path>" << std::endl;
         return 0;
@@ -15,9 +14,8 @@ int main(int argc, char** argv){
     WareHouse wareHouse(configurationFile);
     wareHouse.start();
     if(backup!=nullptr){
-    	delete backup;
-    	backup = nullptr;
+        delete backup;
+        backup = nullptr;
     }
-
     return 0;
 }

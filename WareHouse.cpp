@@ -19,15 +19,6 @@ WareHouse::WareHouse(const string &configFilePath): isOpen(false), actionsLog(),
     this->parseVolunteers(configFilePath);
     this->parseCustomers(configFilePath);
 }
-    // WareHouse::isOpen = false; 
-    // WareHouse::customerCounter = 0; 
-    // WareHouse::volunteerCounter = 0;
-    // WareHouse::orderCounter = 0;
-    // this->parseVolunteers(configFilePath);
-    // this->parseCustomers(configFilePath);
-    // WareHouse::flagCustomer = new SoldierCustomer(-1,"def",-1,-1);
-    // WareHouse::flagVolunteer = new DriverVolunteer(-1,"def",-1,-1);
-    // WareHouse::flagOrder = new Order(-1,-1,-1);
 
 
 void WareHouse::start(){
@@ -36,7 +27,6 @@ void WareHouse::start(){
     bool flag = true; //still gets input from user
     while(flag){
         string sentence;
-        //cout << sentence << endl;
         vector<string> splittedWords;
         getline(std::cin, sentence);
         istringstream iss(sentence);
@@ -45,7 +35,7 @@ void WareHouse::start(){
             splittedWords.push_back(word);
         }
         int sentenceSize = splittedWords.size();
-        for(int i=0; i<sentenceSize; i++){ //TODO maybe there's a more elegant way to do this part
+        for(int i=0; i<sentenceSize; i++){ 
             if(splittedWords.at(0) == "step"){
                 SimulateStep *actor = new SimulateStep(stoi(splittedWords.at(1)));
                 actor->act(*this);
@@ -82,8 +72,6 @@ void WareHouse::start(){
                 actor->act(*this);
                 break;
             }
-
-            //TODO uncomment these once these actions are implemented
             
             else if(splittedWords.at(0) == "close"){
                 Close *actor = new Close();
@@ -105,7 +93,7 @@ void WareHouse::start(){
     }
 }
 
-void WareHouse::simulateStepOnce(){ //TODO think if this function can fail, maybe when all orders are completed?
+void WareHouse::simulateStepOnce(){ 
     vector<int> idsToDelete;
     for (const auto& pendOrd : pendingOrders) {
         if(pendOrd->getStatusAsString() == "Pending"){ //means it needs a collector
@@ -130,42 +118,27 @@ void WareHouse::simulateStepOnce(){ //TODO think if this function can fail, mayb
     }
 
     for (const auto& volun : volunteers){
-        if(volun->isBusy()){ //volunteer currently process an order
+        if(volun->isBusy()){ //volunteer currently processes an order
             volun->step();
             if(!(volun->isBusy())){ //means he finished his job with his assigned order
-                Order *ord = &(this->getOrder(volun->getCompletedOrderId())); //his just-finished order's id was saved in this field
+                Order *ord = &(this->getOrder(volun->getCompletedOrderId()));
                 if(ord->getStatusAsString() == "Collecting"){ //finished collecting
                     pendingOrders.insert(pendingOrders.begin(), ord); //insert to vector's head to prevent order starvation
+                    volun->resetCompletedOrderId();
                 }
                 else if(ord->getStatusAsString() == "Delivering"){ //finished delivering
                     ord->setStatus(OrderStatus::COMPLETED);
                     completedOrders.push_back(ord);
+                    volun->resetCompletedOrderId();
                 }
-                this->deleteOrderFromProccessed(ord->getId()); //delete that order from the processed orders vector
+                this->deleteOrderFromProccessed(ord->getId());
             
-                if(!(volun->hasOrdersLeft())){ //isn't busy and doesn't have orders left, therefore is deleted
+                if(!(volun->hasOrdersLeft())){
                     this->deleteVolunteerFromVector(volun->getId());
                 }
             }
         }
     }
-    //TODO delete later, save for now for testing
-    // cout << endl;
-    // std::cout << "Pending orders vector:" << std::endl;
-    // for (const auto& pendingOrder : pendingOrders) {
-    //     std::cout << pendingOrder->toString() << std::endl; //delete later
-    // }
-    // cout << endl;
-    // std::cout << "In proccess orders vector:" << std::endl;
-    // for (const auto& inProcessOrder : inProcessOrders) {
-    //     std::cout << inProcessOrder->toString() << std::endl; //delete later
-    // }
-    // cout << endl;
-    // std::cout << "completed orders vector:" << std::endl;
-    // for (const auto& completedOrder : completedOrders) {
-    //     std::cout << completedOrder->toString() << std::endl; //delete later
-    // }
-    // cout << endl;
 }
 
 void WareHouse::deleteOrderFromPending(int orderId){
@@ -201,8 +174,6 @@ void WareHouse::deleteVolunteerFromVector(int volID){
     }
 }
 
-//TODO continue from here keep troubleshooting stepOnce
-
 bool WareHouse::assignSuitedCollector(Order& newOrd){
     for (const auto& volunteer : volunteers) {
         if(volunteer->volunteerType() == "Collector" && volunteer->canTakeOrder(newOrd)){
@@ -229,7 +200,7 @@ bool WareHouse::assignSuitedDriver(Order& newOrd){
 
 
 void WareHouse::addOrder(Order* order){ 
-    WareHouse::pendingOrders.push_back(order); //because it is a new order, added to the end of the vector
+    WareHouse::pendingOrders.push_back(order);
     WareHouse::orderCounter++;
 }
 
@@ -238,7 +209,7 @@ bool WareHouse::newOrderbyID(int customerId){
     if(canPlace){
         Customer& custWithOrd = this->getCustomer(customerId);
         int customerDistance = custWithOrd.getCustomerDistance();
-        Order *ord = new Order(WareHouse::orderCounter, customerId, customerDistance); //TODO remember delete
+        Order *ord = new Order(WareHouse::orderCounter, customerId, customerDistance);
         custWithOrd.addOrder(orderCounter);
         this->addOrder(ord);
     }
@@ -294,7 +265,7 @@ bool WareHouse::customerExists(int customerId){
     return (customerId<WareHouse::customerCounter); //because not deleting customers
 }
 
-bool WareHouse::custCanMakeOrder(int customerId){ //checks if exists and can make order. for addOrder operation
+bool WareHouse::custCanMakeOrder(int customerId){ 
     for (const auto& customers : customers) {
         if(customers->getId() == customerId && customers->canMakeOrder()){
             return true;
@@ -323,7 +294,7 @@ Order &WareHouse::getOrder(int orderId) const{
 }
 
 bool WareHouse::orderExists(int orderId){ 
-    return (orderId<WareHouse::orderCounter); //the current counter is next to be assigned. and we never delete successfully placed orders
+    return (orderId<WareHouse::orderCounter);
 }
 
 const vector<BaseAction*> &WareHouse::getActions() const{
@@ -344,7 +315,6 @@ void WareHouse::close(){
     }
     this->isOpen = false;
 }
-
 
 
 void WareHouse::open(){
@@ -459,26 +429,7 @@ void WareHouse::parseCustomers(const string &configFilePath){
     }
 }
 
-void WareHouse::printAllOrders(){ //TODO delete later? used for debugging
-    cout << endl;
-    std::cout << "Pending orders vector:" << std::endl;
-    for (const auto& pendingOrder : pendingOrders) {
-        std::cout << pendingOrder->toString() << std::endl; //delete later
-    }
-    std::cout << "In proccess orders vector:" << std::endl;
-    for (const auto& inProcessOrder : inProcessOrders) {
-        std::cout << inProcessOrder->toString() << std::endl; //delete later
-    }
-    std::cout << "completed orders vector:" << std::endl;
-    for (const auto& completedOrder : completedOrders) {
-        std::cout << completedOrder->toString() << std::endl; //delete later
-    }
-}
-
-
-
-//neya adds:
-WareHouse::~WareHouse(){ //destructor
+WareHouse::~WareHouse(){ 
     for(auto act: this->actionsLog){
         delete act;
     }
@@ -500,11 +451,9 @@ WareHouse::~WareHouse(){ //destructor
     delete this->flagCustomer;
     delete this->flagOrder;
     delete this->flagVolunteer;
-    cout << "deleted" << endl; //to delete COMPLETELY
 }
 
-WareHouse::WareHouse(const WareHouse& other): isOpen(other.isOpen), actionsLog(),volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter), flagCustomer(other.flagCustomer->clone()), flagVolunteer(other.flagVolunteer->clone()), flagOrder(new Order(*other.flagOrder)){ //copy constructor
-    cout << "copy constructor" << endl; //to delete COMPLETELY
+WareHouse::WareHouse(const WareHouse& other): isOpen(other.isOpen), actionsLog(),volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter), flagCustomer(other.flagCustomer->clone()), flagVolunteer(other.flagVolunteer->clone()), flagOrder(new Order(*other.flagOrder)){ 
     for (const auto& act: other.actionsLog){
         this->actionsLog.push_back(act->clone());
     }
@@ -533,68 +482,15 @@ WareHouse::WareHouse(const WareHouse& other): isOpen(other.isOpen), actionsLog()
     }
 }
 
-//     cout << "copy constructor" << endl; //to delete COMPLETELY
 
-//     this->isOpen = other.isOpen;
-//     this->customerCounter = other.customerCounter;
-//     this->volunteerCounter = other.volunteerCounter;
-//     this->orderCounter = other.orderCounter;
-
-//     for (const auto& act: other.actionsLog){
-//         this->actionsLog.push_back(act->clone());
-//     }
-
-//     for (const auto& vol: other.volunteers){
-//         this->volunteers.push_back(vol->clone());
-//     }
-
-//     for (const auto& cust: other.customers){
-//         this->customers.push_back(cust->clone());
-//     }
-
-//     for (const auto& ord: other.pendingOrders){
-//         Order* newOrd = new Order(*ord);
-//         this->pendingOrders.push_back(newOrd);
-//     }
-    
-//     for (const auto& ord: other.inProcessOrders){
-//         Order* newOrd = new Order(*ord);
-//         this->inProcessOrders.push_back(newOrd);
-//     }
-
-//     for (const auto& ord: other.completedOrders){
-//         Order* newOrd = new Order(*ord);
-//         this->completedOrders.push_back(newOrd);
-//     }
-
-//     this->flagCustomer = other.flagCustomer->clone(); 
-//     this->flagVolunteer = other.flagVolunteer->clone(); 
-//     this->flagOrder = new Order(*other.flagOrder);
-
-// }
-
-//TO DELETEEE COMPLETELY
-vector<Customer*> WareHouse::getCustomers(){
-    return this->customers;
-}
-//TO DELETEEE COMPLETELY
-void WareHouse::deleteCustomer(){
-    vector<Customer*>::iterator it = this->customers.begin() + 2;
-    this->customers.erase(it);
-}
-
-
-
-
-WareHouse& WareHouse::operator=(const WareHouse& other){ //copy assignment operator
-    cout << "acopyAssignment" << endl;
+WareHouse& WareHouse::operator=(const WareHouse& other){
     if (this != &other){ //avoid invalid self assignment
         
         //STEP 1: deallocating old memory
-        for(auto act: this->actionsLog){ //delete all actions on the heap
+        for(auto act: this->actionsLog){ 
             delete act;
         }
-        this->actionsLog.clear(); //clear old actions addresses
+        this->actionsLog.clear(); //clears old addresses
 
         for(auto vol: this->volunteers){
             delete vol;
@@ -669,7 +565,6 @@ WareHouse& WareHouse::operator=(const WareHouse& other){ //copy assignment opera
 
 //move constructor
 WareHouse::WareHouse(WareHouse&& other) noexcept: isOpen(std::move(other.isOpen)), actionsLog(std::move(other.actionsLog)), volunteers(std::move(other.volunteers)), pendingOrders(std::move(other.pendingOrders)), inProcessOrders(std::move(other.inProcessOrders)), completedOrders(std::move(other.completedOrders)), customers(std::move(customers)), customerCounter(std::move(other.customerCounter)), volunteerCounter(std::move(other.volunteerCounter)), orderCounter(std::move(other.orderCounter)), flagCustomer(other.flagCustomer), flagVolunteer(other.flagVolunteer), flagOrder(other.flagOrder){   
-    cout << "move constructor" << endl;
     other.actionsLog.clear();
     other.volunteers.clear();
     other.pendingOrders.clear();
@@ -712,117 +607,6 @@ WareHouse& WareHouse::operator=(WareHouse&& other) noexcept {
     }
     return *this;
 }
-
-// int main(){
-//     string fileLocation = "../bin/rest/configFileExample.txt";
-//     WareHouse wh(fileLocation); //what's inside are only what were in the file
-//     cout << "original customers:" << endl;
-//     vector<Customer*> f = wh.getCustomers();
-//     for (Customer* elem: f){
-//         string s = elem->toString();
-//         cout << s << endl;
-//     }
-
-//     WareHouse h = wh.createObject(fileLocation);
-//     cout << "updated customers:" << endl;
-//     vector<Customer*> f2 = h.getCustomers();
-//     for (Customer* elem: f2){
-//         string s = elem->toString();
-//         cout << s << endl;
-//     }
-
-// }
-
-
-// int main(){
-//     string fileLocation = "../bin/rest/configFileExample.txt";
-//     WareHouse wh(fileLocation);
-
-//     wh.AddCustomerToWareHouse("Eilon", "civilian", 7, 3);
-//     wh.AddCustomerToWareHouse("Neya", "Solider", 9, 2);
-//     wh.AddCustomerToWareHouse("GilTargil", "civilian", 6, 5);
-
-//     cout << "original customers:" << endl;
-//     vector<Customer*> f = wh.getCustomers();
-//     for (Customer* elem: f){
-//         string s = elem->toString();
-//         cout << s << endl;
-//     }
-    //wh.start();
-
-    // wh.newOrderbyID(1);
-    // wh.newOrderbyID(2);
-    // wh.newOrderbyID(1);
-
-    // wh.simulateStepOnce();
-
-    // wh.simulateStepOnce();
-
-    // wh.simulateStepOnce();
-    // wh.simulateStepOnce();
-    // wh.simulateStepOnce();
-    // wh.simulateStepOnce();
-    // wh.simulateStepOnce();
-    // wh.simulateStepOnce();
-    //cout << "original orders:" << endl;
-    //wh.printAllOrders();
-    // Order o1 = wh.getOrder(1);
-    // // Order o2 = wh.getOrder(2);
-
-    // cout << o1.toString() << endl;
-    // // cout << o2.toString() << endl;
-    // WareHouse wh2 = wh;
-    //cout << "copied orders:" << endl;
-    //wh2.printAllOrders();
-
-
-    // cout << "copied customers:" << endl;
-    // vector<Customer*> f1 = wh2.getCustomers();
-    // for (Customer* elem: f1){
-    //     string s = elem->toString();
-    //     cout << s << endl;
-    // }
-
-    // wh.deleteCustomer();
-    // f = wh.getCustomers();
-    // cout << "original customers after del:" << endl;
-    // for (Customer* elem: f){
-    //     string s = elem->toString();
-    //     cout << s << endl;
-    // }
-    // f1 = wh2.getCustomers();
-    // cout << "copied customers after del:" << endl;
-    // for (Customer* elem: f1){
-    //     string s = elem->toString();
-    //     cout << s << endl;
-    // }
-    // Order* d1 = new Order(11,21,13);
-    // Order* d2 = new Order(10,5,6);
-    // Order* d3 = new Order(7,8,9);
-    // wh.addOrder(d1);
-    // wh.addOrder(d2);
-    // wh.addOrder(d3);
-    // cout << "original orders:" << endl;
-    // wh.printAllOrders();
-    // WareHouse wh2 = wh;
-    // cout << "copied orders:" << endl;
-    // wh2.printAllOrders();
-
-    // wh.deleteOrderFromPending(7);
-    // cout << "original orders after del:" << endl;
-    // wh.printAllOrders();
-
-    // cout << "copied orders after del:" << endl;
-    // wh2.printAllOrders();
-
-//     return 0;
-// }
-
-
-
-
-
-
 
 
 
