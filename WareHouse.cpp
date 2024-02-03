@@ -95,18 +95,21 @@ void WareHouse::start(){
 
 void WareHouse::simulateStepOnce(){ 
     vector<int> idsToDelete;
-    for (const auto& pendOrd : pendingOrders) {
+    for (auto& pendOrd : pendingOrders) {
         if(pendOrd->getStatusAsString() == "Pending"){ //means it needs a collector
             bool foundCollector = this->assignSuitedCollector(*pendOrd);
             if(foundCollector){
-                WareHouse::inProcessOrders.push_back(pendOrd);
+                Order* copyPendOrd = new Order(*pendOrd);
+                WareHouse::inProcessOrders.push_back(copyPendOrd);
+
                 idsToDelete.push_back(pendOrd->getId());
             }
         }
         else if(pendOrd->getStatusAsString() == "Collecting"){ //means it needs a driver
             bool foundDriver = this->assignSuitedDriver(*pendOrd);
             if(foundDriver){
-                WareHouse::inProcessOrders.push_back(pendOrd);
+                Order* copyPendOrd = new Order(*pendOrd);
+                WareHouse::inProcessOrders.push_back(copyPendOrd);
                 idsToDelete.push_back(pendOrd->getId());
             }
         }
@@ -116,19 +119,20 @@ void WareHouse::simulateStepOnce(){
         this->deleteOrderFromPending(poppedElement);
         idsToDelete.pop_back();
     }
-
     for (const auto& volun : volunteers){
         if(volun->isBusy()){ //volunteer currently processes an order
             volun->step();
             if(!(volun->isBusy())){ //means he finished his job with his assigned order
                 Order *ord = &(this->getOrder(volun->getCompletedOrderId()));
                 if(ord->getStatusAsString() == "Collecting"){ //finished collecting
-                    pendingOrders.insert(pendingOrders.begin(), ord); //insert to vector's head to prevent order starvation
+                    Order* copyPendOrd = new Order(*ord);
+                    pendingOrders.insert(pendingOrders.begin(),copyPendOrd); //insert to vector's head to prevent order starvation
                     volun->resetCompletedOrderId();
                 }
                 else if(ord->getStatusAsString() == "Delivering"){ //finished delivering
                     ord->setStatus(OrderStatus::COMPLETED);
-                    completedOrders.push_back(ord);
+                    Order* copyPendOrd = new Order(*ord);
+                    completedOrders.push_back(copyPendOrd);
                     volun->resetCompletedOrderId();
                 }
                 this->deleteOrderFromProccessed(ord->getId());
@@ -610,6 +614,3 @@ WareHouse& WareHouse::operator=(WareHouse&& other) noexcept {
     }
     return *this;
 }
-
-
-
