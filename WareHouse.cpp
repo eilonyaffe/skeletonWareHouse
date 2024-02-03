@@ -143,10 +143,11 @@ void WareHouse::simulateStepOnce(){
 
 void WareHouse::deleteOrderFromPending(int orderId){
     int i = 0;
-    for (const auto& pendOrd : WareHouse::pendingOrders) {
+    for (auto& pendOrd : WareHouse::pendingOrders) {
         if(pendOrd->getId() == orderId){
-             WareHouse::pendingOrders.erase(pendingOrders.begin()+i);
-             break;
+            delete pendOrd;
+            WareHouse::pendingOrders.erase(pendingOrders.begin()+i);
+            break;
         }
         i++;
     }
@@ -154,10 +155,11 @@ void WareHouse::deleteOrderFromPending(int orderId){
 
 void WareHouse::deleteOrderFromProccessed(int orderId){
     int i = 0;
-    for (const auto& procOr : inProcessOrders) {
+    for (auto& procOr : inProcessOrders) {
         if(procOr->getId() == orderId){
-             WareHouse::inProcessOrders.erase(inProcessOrders.begin()+i);
-             break;
+            delete procOr;
+            WareHouse::inProcessOrders.erase(inProcessOrders.begin()+i);
+            break;
         }
         i++;
     }
@@ -165,10 +167,11 @@ void WareHouse::deleteOrderFromProccessed(int orderId){
 
 void WareHouse::deleteVolunteerFromVector(int volID){
     int i = 0;
-    for (const auto& vol : WareHouse::volunteers) {
-        if(vol->getId() == volID){
-             WareHouse::volunteers.erase(volunteers.begin()+i);
-             break;
+    for (auto& vol : WareHouse::volunteers) {
+        if(vol->getId() == volID){    
+            delete vol;
+            WareHouse::volunteers.erase(volunteers.begin()+i);
+            break;
         }
         i++;
     }
